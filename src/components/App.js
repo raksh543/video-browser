@@ -1,35 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import SearchBar from './SearchBar';
-import youtube from '../apis/youtube';
 import VideoList from './VideoList';
 import VideoDetail from './VideoDetail';
-
-const KEY ='AIzaSyBh4aXInbCnNlGW01Xz4zlo4xPMjdu1Z2g';
+import useVideos from '../hooks/useVideos';
 
 const App =()=>{
-    const [videos, setVideos] = useState([]);
+   
     const [selectedVideo, setSelectedVideo] = useState(null);
 
-    useEffect(()=>{
-        onTermSubmit('buildings');
-    }, []);
+    const [videos, search] = useVideos('buildings');
 
-    const onTermSubmit = async term => {
-        const response = await youtube.get('/search',{
-        params: {
-            part :'snippet',
-            type: 'video',
-            maxResults: 5,
-            key: KEY,
-            q: term
-        }});
-        setVideos(response.data.items);
-        setSelectedVideo(response.data.items[0]);
-    }
+    useEffect(()=>{
+        setSelectedVideo(videos[0]);
+    }, [videos])
+
+    // setSelectedVideo(response.data.items[0]);
 
     return(
         <div className="ui container">
-            <SearchBar onTermSubmit={onTermSubmit} />
+            <SearchBar onTermSubmit={search} />
             {/* I have {this.state.videos.length} Videos. */}
             <div className="ui grid">
                 <div className="ui row">
@@ -46,6 +35,7 @@ const App =()=>{
             </div>
         </div>
     );
+
 
 }
 
